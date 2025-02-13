@@ -1,0 +1,134 @@
+Easy Level Questions
+
+
+Q1: What is a primary key in a database, and why is it important? Provide an example using the students table.
+Ans:- A primary key is a unique identifier for each record in a database table. It ensures that each row has a distinct identity and prevents duplicate entries.
+Example for the students table:
+In the students table, the id column can be used as a primary key because each student's ID is unique.
+
+CREATE TABLE students (
+    id INT PRIMARY KEY,
+    name VARCHAR(50),
+    age INT
+);
+
+
+
+
+Q2: What does the SELECT statement do in MySQL? Write a query to retrieve all records from the students table.
+Ans:- The SELECT statement is used to fetch data from a database.
+Query to retrieve all records from the students table:
+
+--SELECT * FROM students;--
+
+
+
+Q3: How do you insert data into a table using MySQL? Insert a new student (id: 5, name: Emily, age: 21) into the students table.
+Ans:- The INSERT INTO statement is used to add new records into a table.
+INSERT INTO students (id, name, age) 
+VALUES (5, 'Emily', 21);
+
+
+
+
+Q4: What is the purpose of a foreign key? Explain with respect to the orders table.
+Ans:- A foreign key is used to establish a relationship between two tables by linking a column in one table to the primary key of another table.
+
+In the orders table, customer_id is a foreign key that references the id column in the students table.
+This ensures that every order is linked to an existing student and maintains referential integrity.
+
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY,
+    customer_id INT,
+    order_date DATE,
+    order_status VARCHAR(20),
+    FOREIGN KEY (customer_id) REFERENCES students(id)
+);
+
+
+
+Q5: How can you delete a record from the students table where id = 2?
+Ans:- To remove a specific record, use the DELETE statement:
+
+DELETE FROM students WHERE id = 2;
+
+
+
+Q6: What is the difference between DELETE and TRUNCATE in SQL? Provide an example.
+Ans:- DELETE removes specific rows based on a condition and logs the operation (can be rolled back).
+TRUNCATE removes all rows from a table but does not log individual row deletions (faster and cannot be rolled back).
+Example:
+
+DELETE FROM students WHERE id = 3; -- Deletes only Charlie
+TRUNCATE TABLE students; -- Deletes all students
+
+
+
+Q7: How can you update a student's age? Write a query to update Charlie’s age to 21 in the students table.
+Ans:- The UPDATE statement is used to modify existing records:
+
+UPDATE students 
+SET age = 21 
+WHERE name = 'Charlie';
+
+-------------------------------------------------------------------------------------------------
+
+**Medium Level Questions**
+
+
+Q1: Why do we need tabular data instead of storing everything in a single file? Explain the benefits using the students and orders tables.
+Ans:- Storing everything in a single file can lead to data redundancy, difficulty in data retrieval, and inconsistencies. By separating data into tables:
+
+students contains personal details of students.
+orders contains purchase history linked to students using customer_id.
+This approach makes it efficient, reduces duplication, and ensures data integrity through normalization.
+
+
+
+Q2: Understanding database relationships, how does the customer_id in the orders table relate to the id in the students table? Why is this important?
+Ans:- The customer_id in the orders table acts as a foreign key, linking orders to students using the id column in the students table.
+This ensures that only valid students can place orders, preventing orphaned records and maintaining referential integrity.
+
+SELECT students.name, orders.order_id, orders.order_date
+FROM students
+JOIN orders ON students.id = orders.customer_id;
+
+
+
+
+Q3: Write an SQL query to find all orders placed after January 12, 2025.
+Ans:- Use the WHERE clause with the > operator:
+
+SELECT * FROM orders 
+WHERE order_date > '2025-01-12';
+
+
+Q4: Write an SQL query to delete all records from the orders table where the order_status is "Cancelled".
+Ans:- Use the DELETE statement:
+
+DELETE FROM orders 
+WHERE order_status = 'Cancelled';
+
+
+----------------------------------------------------------------------------------------- 
+**Hard Level Questions**
+
+
+Q1: Write an SQL query to find the total number of orders placed by each student, showing the results in ascending order of total orders.
+Ans:- Use GROUP BY and COUNT() to count orders per student and ORDER BY to sort:
+
+
+SELECT customer_id, COUNT(order_id) AS total_orders
+FROM orders
+GROUP BY customer_id
+ORDER BY total_orders ASC;
+
+
+Q2: Write an SQL query to display all students who have not placed any orders.
+Ans:- Use LEFT JOIN with IS NULL to find students with no matching orders:
+
+SELECT s.id, s.name 
+FROM students s
+LEFT JOIN orders o ON s.id = o.customer_id
+WHERE o.customer_id IS NULL;
+
